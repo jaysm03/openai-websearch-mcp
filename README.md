@@ -4,43 +4,27 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--5%20%26%20O3-blue.svg)](https://openai.com/)
 
-A powerful MCP (Model Context Protocol) server that connects OpenAI's latest models (O3, GPT-5 family) with real-time web search capabilities. This implementation provides dynamic token limits, flexible reasoning effort levels, and robust timeout handling for production use.
+## Overview
 
-## 🚀 Key Features
+A production-ready MCP (Model Context Protocol) server that integrates OpenAI's latest models (O3, GPT-5 family) with real-time web search capabilities. This implementation provides dynamic token limits, configurable reasoning effort levels, and robust timeout handling for enterprise deployment.
 
-- **Multi-Model Support**: Access to O3, GPT-5, GPT-5-mini, and GPT-5-nano models
-- **Web Search Integration**: Real-time web search grounding for current information
-- **Dynamic Token Limits**: Automatic scaling based on reasoning effort (4k/8k/16k tokens)
-- **Flexible Reasoning Effort**: Low, medium, and high reasoning levels for different use cases
-- **Robust Timeout Handling**: Configurable timeouts with proper error recovery
+## Features
+
+- **Multi-Model Support**: Access to O3-2025-04-16, GPT-5, GPT-5-mini, and GPT-5-nano models
+- **Web Search Integration**: Real-time web search grounding for current information retrieval
+- **Dynamic Token Management**: Automatic scaling based on reasoning effort (4k/8k/16k tokens)
+- **Configurable Reasoning Effort**: Low, medium, and high reasoning levels for different use cases
+- **Robust Timeout Handling**: Configurable timeouts with proper error recovery mechanisms
 - **Source Attribution**: Automatic citation of web sources with URLs and titles
 - **Production Ready**: Comprehensive error handling and performance optimizations
 
-## 📋 Supported Models
+## Prerequisites
 
-| Model | Description | Best For |
-|-------|-------------|----------|
-| **O3-2025-04-16** | Latest reasoning model with advanced capabilities | Complex reasoning, analysis, and problem-solving |
-| **GPT-5** | Full-scale GPT-5 model | General purpose, high-quality responses |
-| **GPT-5-mini** | Efficient GPT-5 variant | Balanced performance and speed |
-| **GPT-5-nano** | Lightweight GPT-5 variant | Fast responses, simple queries |
-
-## 🎯 Token Limits by Reasoning Effort
-
-| Reasoning Effort | Token Limit | Use Case |
-|-----------------|-------------|----------|
-| **Low** | 4,000 tokens | Quick searches, simple queries |
-| **Medium** | 8,000 tokens | Detailed research, comprehensive answers |
-| **High** | 16,000 tokens | In-depth analysis, complex topics |
-
-## 🛠️ Installation
-
-### Prerequisites
 - Node.js 18.0.0 or higher
 - OpenAI API key with access to GPT-5 and O3 models
 - npm or yarn package manager
 
-### Quick Setup
+## Installation
 
 1. **Clone the repository**
    ```bash
@@ -59,25 +43,60 @@ A powerful MCP (Model Context Protocol) server that connects OpenAI's latest mod
    # Edit .env and add your OpenAI API key
    ```
 
-4. **Test the installation**
+4. **Verify installation**
    ```bash
    node index.js
    ```
-   You should see: `OpenAI Multi-Model MCP server with web search grounding running`
+   Expected output: `OpenAI Multi-Model MCP server with web search grounding running`
 
-## ⚙️ Configuration
+## MCP Settings Configuration
 
 ### Environment Variables
 
-Create a `.env` file with:
+Create a `.env` file in the project root:
 ```env
 OPENAI_API_KEY=sk-your_openai_api_key_here
 ```
 
 ### MCP Client Configuration
 
-Add to your MCP client configuration:
+The MCP server operates on-demand and is automatically started by MCP clients when needed. Configure your MCP client with the following settings:
 
+#### For Roo/Cline (VS Code)
+
+**Configuration File Locations:**
+- **macOS**: `~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json`
+- **Windows**: `%APPDATA%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json`
+- **Linux**: `~/.config/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json`
+
+**Complete Configuration:**
+```json
+{
+  "mcpServers": {
+    "openai-multi-model-grounded-search": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/openai_with_search_grounding/index.js"
+      ],
+      "env": {
+        "OPENAI_API_KEY": "sk-your_openai_api_key_here"
+      },
+      "alwaysAllow": [
+        "grounded_search"
+      ],
+      "timeout": 3600
+    }
+  }
+}
+```
+
+#### For Claude Desktop
+
+**Configuration File Locations:**
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+**Complete Configuration:**
 ```json
 {
   "mcpServers": {
@@ -86,36 +105,23 @@ Add to your MCP client configuration:
       "args": ["/absolute/path/to/openai_with_search_grounding/index.js"],
       "env": {
         "OPENAI_API_KEY": "sk-your_openai_api_key_here"
-      }
+      },
+      "alwaysAllow": [
+        "grounded_search"
+      ]
     }
   }
 }
 ```
 
-### Client-Specific Paths
+**Important Configuration Notes:**
+- Replace `/absolute/path/to/openai_with_search_grounding/` with the actual absolute path to your project directory
+- Replace `sk-your_openai_api_key_here` with your actual OpenAI API key
+- Use forward slashes (/) in paths, even on Windows
+- The `timeout` parameter is optional and defaults to system settings
+- Restart your MCP client after configuration changes
 
-**Claude Desktop (macOS)**:
-```
-~/Library/Application Support/Claude/claude_desktop_config.json
-```
-
-**Roo/Cline (VS Code)**:
-```bash
-# macOS
-~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
-
-# Windows
-%APPDATA%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json
-
-# Linux
-~/.config/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/mcp_settings.json
-```
-
-### Timeout Configuration
-
-The server includes configurable timeouts for different scenarios. See [TIMEOUT_CONFIGURATION.md](TIMEOUT_CONFIGURATION.md) for detailed timeout settings and customization options.
-
-## 📖 Usage
+## Usage
 
 ### Available Tool
 
@@ -123,12 +129,12 @@ The server includes configurable timeouts for different scenarios. See [TIMEOUT_
 
 **Parameters:**
 - `query` (string, required): Search query for current information
-- `model` (string, optional): Model to use - "gpt-5", "gpt-5-mini", "gpt-5-nano", "o3-2025-04-16" (default: "o3-2025-04-16")
+- `model` (string, optional): Model selection - "gpt-5", "gpt-5-mini", "gpt-5-nano", "o3-2025-04-16" (default: "o3-2025-04-16")
 - `reasoning_effort` (string, optional): Reasoning effort level - "low", "medium", "high" (default: "low")
 
 ### Usage Examples
 
-#### Basic Search (O3 with low effort)
+#### Basic Search with Default Settings
 ```json
 {
   "method": "tools/call",
@@ -141,7 +147,7 @@ The server includes configurable timeouts for different scenarios. See [TIMEOUT_
 }
 ```
 
-#### Complex Analysis (O3 with high effort)
+#### Complex Analysis with High Reasoning Effort
 ```json
 {
   "method": "tools/call",
@@ -156,7 +162,7 @@ The server includes configurable timeouts for different scenarios. See [TIMEOUT_
 }
 ```
 
-#### Quick Response (GPT-5-nano)
+#### Quick Response with Lightweight Model
 ```json
 {
   "method": "tools/call",
@@ -166,21 +172,6 @@ The server includes configurable timeouts for different scenarios. See [TIMEOUT_
       "query": "current weather in San Francisco",
       "model": "gpt-5-nano",
       "reasoning_effort": "low"
-    }
-  }
-}
-```
-
-#### Balanced Search (GPT-5-mini with medium effort)
-```json
-{
-  "method": "tools/call",
-  "params": {
-    "name": "grounded_search",
-    "arguments": {
-      "query": "explain the latest developments in renewable energy",
-      "model": "gpt-5-mini",
-      "reasoning_effort": "medium"
     }
   }
 }
@@ -200,115 +191,108 @@ Reasoning Effort: [selected effort level]
 2. Another Source - https://example.com/research
 ```
 
-## 🔧 Troubleshooting
+## Token Limits
 
-### Common Issues
+Token limits are automatically adjusted based on reasoning effort levels:
 
-**1. Authentication Errors**
+| Reasoning Effort | Token Limit | Use Case |
+|-----------------|-------------|----------|
+| **Low** | 4,000 tokens | Quick searches, simple queries |
+| **Medium** | 8,000 tokens | Detailed research, comprehensive answers |
+| **High** | 16,000 tokens | In-depth analysis, complex topics |
+
+## Deployment
+
+### Production Deployment Considerations
+
+**Security:**
+- Secure API key management using environment variables
+- Implement rate limiting to prevent abuse
+- Use HTTPS for all external communications
+- Regular security audits and dependency updates
+
+**Monitoring:**
+- Implement comprehensive logging for debugging and monitoring
+- Set up error tracking and alerting systems
+- Monitor API usage and costs
+- Track performance metrics and response times
+
+**Scalability:**
+- The server supports horizontal scaling through multiple instances
+- Implement load balancing for high-availability deployments
+- Consider caching frequently requested information
+- Monitor resource usage and optimize as needed
+
+**Environment Setup:**
+- Use process managers like PM2 for production deployments
+- Configure proper environment variables for different stages
+- Implement health checks and automatic restarts
+- Set up backup and recovery procedures
+
+### Server Operation
+
+The MCP server operates on-demand:
+- Automatically started by MCP clients when needed
+- Shuts down when not in use to conserve resources
+- No manual server management required
+- Supports concurrent requests from multiple clients
+
+## Troubleshooting
+
+### Authentication Issues
+
+**Verify API Key Format:**
 ```bash
-# Verify API key format
 echo $OPENAI_API_KEY | grep "^sk-"
+```
 
-# Test API connectivity
+**Test API Connectivity:**
+```bash
 curl https://api.openai.com/v1/models \
   -H "Authorization: Bearer $OPENAI_API_KEY"
 ```
 
-**2. Model Access Issues**
+### Model Access Issues
+
 - Ensure your OpenAI account has access to GPT-5 and O3 models
-- Check your API usage limits and billing status
+- Check API usage limits and billing status
 - Verify model availability in your region
+- Contact OpenAI support for access-related issues
 
-**3. Timeout Errors**
-- For long-running queries, use higher reasoning effort levels
-- Check [TIMEOUT_CONFIGURATION.md](TIMEOUT_CONFIGURATION.md) for timeout adjustments
-- Monitor your network connection stability
+### Configuration Problems
 
-**4. MCP Connection Problems**
+**MCP Connection Issues:**
 - Verify the absolute path to `index.js` is correct
 - Ensure Node.js version is 18 or higher
-- Check that environment variables are properly set
+- Check that environment variables are properly configured
+- Restart your MCP client after configuration changes
+
+**Timeout Errors:**
+- Increase timeout values for complex queries
+- Use appropriate reasoning effort levels
+- Monitor network connection stability
+- Check server logs for detailed error information
 
 ### Debug Mode
+
 ```bash
 # Run with debug output
 OPENAI_API_KEY=your-key node index.js 2>&1 | tee debug.log
 
-# Test specific model
-node test-openai.js "your query" "gpt-5-mini" "medium"
+# Verify server startup
+node index.js
 ```
 
-## 🏗️ Architecture
+### Common Solutions
 
-### System Overview
-```mermaid
-graph LR
-    A[MCP Client] -->|JSON-RPC| B[MCP Server]
-    B -->|Model Selection| C[Query Processing]
-    C -->|Dynamic Tokens| D[OpenAI API]
-    D -->|Web Search| E[Live Web Data]
-    E -->|Source Extraction| F[Response + Citations]
-    F -->|JSON-RPC| A
-```
+1. **Path Issues**: Use absolute paths in configuration files
+2. **Permission Errors**: Ensure proper file permissions for the project directory
+3. **Network Issues**: Check firewall settings and network connectivity
+4. **Dependency Issues**: Run `npm install` to ensure all dependencies are installed
 
-### Key Components
-- **Model Router**: Intelligently selects appropriate model based on query
-- **Token Manager**: Dynamically adjusts token limits based on reasoning effort
-- **Timeout Handler**: Manages request timeouts with graceful fallbacks
-- **Source Extractor**: Parses and formats web search citations
-
-## 📊 Performance Optimizations
-
-See [PERFORMANCE_OPTIMIZATIONS.md](PERFORMANCE_OPTIMIZATIONS.md) for detailed performance tuning guidelines.
-
-### Quick Tips
-- Use GPT-5-nano for simple, fast queries
-- Select appropriate reasoning effort to balance quality and speed
-- Monitor token usage to optimize costs
-- Implement caching for frequently requested information
-
-## 🚀 Deployment
-
-For production deployment guidelines, see [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md).
-
-### Key Considerations
-- Secure API key management
-- Rate limiting implementation
-- Error monitoring and logging
-- Horizontal scaling options
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-- Maintain backward compatibility
-- Add tests for new features
-- Update documentation
-- Follow existing code style
-
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🔗 Resources
-
-- [OpenAI API Documentation](https://platform.openai.com/docs)
-- [MCP Protocol Specification](https://spec.modelcontextprotocol.io/)
-- [OpenAI Model Overview](https://platform.openai.com/docs/models)
-- [Web Search API Documentation](https://platform.openai.com/docs/guides/web-search)
-
-## 📈 Version History
-
-- **1.2.0** - Full GPT-5 support with dynamic token limits
-- **1.1.0** - Added O3 model and reasoning effort levels
-- **1.0.0** - Initial release with basic web search grounding
 
 ---
 
