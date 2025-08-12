@@ -14,10 +14,15 @@ async function initializeOpenAI() {
       throw new Error('OPENAI_API_KEY environment variable is required');
     }
     
+    // Configure OpenAI client with explicit timeout settings
+    // 15 minutes (900000ms) timeout based on OpenAI's recommendations for complex Responses API calls
+    // This prevents premature timeouts during high reasoning effort requests
     client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
+      timeout: 900000, // 15 minutes in milliseconds
+      maxRetries: 2
     });
-    console.error('OpenAI client initialized successfully');
+    console.error('OpenAI client initialized successfully with 15-minute timeout');
   } catch (error) {
     console.error('Failed to initialize OpenAI client:', error);
     process.exit(1);
@@ -29,34 +34,85 @@ async function groundedSearch(query, model = 'o3-2025-04-16', reasoningEffort = 
   const today = new Date().toISOString().split('T')[0];
   const fullPrompt = `Today's date: ${today}\nQuery: ${query}`;
   
+  // Track request start time for duration logging
+  const startTime = Date.now();
+  
+  // Set token limits based on reasoning effort to prevent truncation
+  let maxTokens;
+  switch (reasoningEffort) {
+    case 'low':
+      maxTokens = 4000;
+      break;
+    case 'medium':
+      maxTokens = 8000;
+      break;
+    case 'high':
+      maxTokens = 16000;
+      break;
+    default:
+      maxTokens = 4000;
+  }
+  
   // Log selection for transparency
-  console.error(`Using model: ${model} | Reasoning effort: ${reasoningEffort}`);
+  console.error(`Starting request - Model: ${model} | Reasoning effort: ${reasoningEffort} | Query length: ${query.length} chars | Max tokens: ${maxTokens}`);
+  
+  // Configure service tier for high/maximum reasoning effort requests
+  // Flex processing helps handle computationally intensive requests
+  
+  const requestConfig = {
+    model: model,
+    input: fullPrompt,
+    tools: [{ type: 'web_search' }],
+    reasoning: { effort: reasoningEffort },
+    max_output_tokens: maxTokens,
+  };
+  
+  // Add flex service tier for medium and high reasoning effort to improve reliability
+  if (reasoningEffort === 'medium' || reasoningEffort === 'high') {
+    requestConfig.service_tier = 'flex';
+    console.error(`Using flex service tier for ${reasoningEffort} reasoning effort`);
+  }
   
   try {
-    const resp = await client.responses.create({
-      model: model,
-      input: fullPrompt,
-      tools: [{ type: 'web_search' }],
-      reasoning: { effort: reasoningEffort },
-      max_output_tokens: 2000,
-    });
+    const resp = await client.responses.create(requestConfig);
+    
+    // Log successful completion with duration
+    const duration = Date.now() - startTime;
+    console.error(`Request completed successfully in ${duration}ms`);
 
     // Return just the clean response text
     return resp.output_text || '';
   } catch (error) {
+    // Log error with duration
+    const duration = Date.now() - startTime;
+    console.error(`Request failed after ${duration}ms: ${error.message}`);
+    
     // Fallback to o3 if specified model is not available
     if (error.message.includes('model') && model !== 'o3-2025-04-16') {
       console.error(`Model ${model} not available, falling back to o3`);
       try {
-        const fallbackResp = await client.responses.create({
+        const fallbackConfig = {
           model: 'o3-2025-04-16',
           input: fullPrompt,
           tools: [{ type: 'web_search' }],
           reasoning: { effort: reasoningEffort },
-          max_output_tokens: 2000,
-        });
+          max_output_tokens: maxTokens,
+        };
+        
+        // Apply flex service tier to fallback if needed
+        if (reasoningEffort === 'medium' || reasoningEffort === 'high') {
+          fallbackConfig.service_tier = 'flex';
+        }
+        
+        const fallbackStartTime = Date.now();
+        const fallbackResp = await client.responses.create(fallbackConfig);
+        const fallbackDuration = Date.now() - fallbackStartTime;
+        console.error(`Fallback request completed in ${fallbackDuration}ms`);
+        
         return fallbackResp.output_text || '';
       } catch (fallbackError) {
+        const fallbackDuration = Date.now() - startTime;
+        console.error(`Fallback request failed after ${fallbackDuration}ms: ${fallbackError.message}`);
         throw new Error(`OpenAI API error: ${fallbackError.message}`);
       }
     }
@@ -96,8 +152,8 @@ const GROUNDED_SEARCH_TOOL = {
       },
       reasoning_effort: {
         type: "string",
-        description: "Reasoning effort level. Options: 'low', 'medium', 'high', 'maximum'. Defaults to 'low'",
-        enum: ["low", "medium", "high", "maximum"],
+        description: "Reasoning effort level. Options: 'low', 'medium', 'high'. Defaults to 'low'",
+        enum: ["low", "medium", "high"],
         default: "low"
       }
     },
