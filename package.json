@@ -1,7 +1,7 @@
 {
-  "name": "openai-multi-model-grounded-search",
-  "version": "1.2.0",
-  "description": "OpenAI Multi-Model MCP Server with Web Search Grounding",
+  "name": "openai-grounded-search",
+  "version": "1.3.0",
+  "description": "OpenAI MCP Server with Web Search Grounding and Deep Research API support",
   "type": "module",
   "main": "index.js",
   "author": "Your Name <email@example.com>",
@@ -9,7 +9,7 @@
   "keywords": ["mcp", "openai", "search", "grounding", "gpt-5", "o3"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/[username]/openai-with-search-grounding.git"
+    "url": "https://github.com/jaysm03/openai-grounded-search.git"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.1",

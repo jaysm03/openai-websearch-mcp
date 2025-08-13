@@ -136,7 +136,7 @@ const server = new Server(
 // Tool definition with optional model and reasoning effort parameters
 const GROUNDED_SEARCH_TOOL = {
   name: "grounded_search",
-  description: "Search for current information using OpenAI models (GPT-5, O3) with Web Search grounding. The AI can specify model and reasoning effort based on query complexity.",
+  description: "Search for current information using OpenAI models (GPT-5, O3, Deep Research) with Web Search grounding. The AI can specify model and reasoning effort based on query complexity. Deep Research models provide enhanced research capabilities for complex queries.",
   inputSchema: {
     type: "object",
     properties: {
@@ -146,8 +146,8 @@ const GROUNDED_SEARCH_TOOL = {
       },
       model: {
         type: "string",
-        description: "OpenAI model to use. Options: 'gpt-5', 'gpt-5-mini', 'gpt-5-nano', 'o3-2025-04-16'. Defaults to 'o3-2025-04-16'",
-        enum: ["gpt-5", "gpt-5-mini", "gpt-5-nano", "o3-2025-04-16"],
+        description: "OpenAI model to use. Options: 'gpt-5', 'gpt-5-mini', 'gpt-5-nano', 'o3-2025-04-16', 'o3-deep-research', 'o4-mini-deep-research'. Deep Research models provide advanced research capabilities. Defaults to 'o3-2025-04-16'",
+        enum: ["gpt-5", "gpt-5-mini", "gpt-5-nano", "o3-2025-04-16", "o3-deep-research", "o4-mini-deep-research"],
         default: "o3-2025-04-16"
       },
       reasoning_effort: {

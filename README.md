@@ -10,7 +10,8 @@ A production-ready MCP (Model Context Protocol) server that integrates OpenAI's 
 
 ## Features
 
-- **Multi-Model Support**: Access to O3-2025-04-16, GPT-5, GPT-5-mini, and GPT-5-nano models
+- **Multi-Model Support**: Access to O3-2025-04-16, GPT-5, GPT-5-mini, GPT-5-nano, and Deep Research models
+- **Deep Research API**: Advanced research capabilities with o3-deep-research and o4-mini-deep-research models
 - **Web Search Integration**: Real-time web search grounding for current information retrieval
 - **Dynamic Token Management**: Automatic scaling based on reasoning effort (4k/8k/16k tokens)
 - **Configurable Reasoning Effort**: Low, medium, and high reasoning levels for different use cases
@@ -129,7 +130,7 @@ The MCP server operates on-demand and is automatically started by MCP clients wh
 
 **Parameters:**
 - `query` (string, required): Search query for current information
-- `model` (string, optional): Model selection - "gpt-5", "gpt-5-mini", "gpt-5-nano", "o3-2025-04-16" (default: "o3-2025-04-16")
+- `model` (string, optional): Model selection - "gpt-5", "gpt-5-mini", "gpt-5-nano", "o3-2025-04-16", "o3-deep-research", "o4-mini-deep-research" (default: "o3-2025-04-16")
 - `reasoning_effort` (string, optional): Reasoning effort level - "low", "medium", "high" (default: "low")
 
 ### Usage Examples
@@ -172,6 +173,36 @@ The MCP server operates on-demand and is automatically started by MCP clients wh
       "query": "current weather in San Francisco",
       "model": "gpt-5-nano",
       "reasoning_effort": "low"
+    }
+  }
+}
+```
+
+#### Advanced Research with Deep Research Models
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "grounded_search",
+    "arguments": {
+      "query": "comprehensive analysis of renewable energy trends and policy implications",
+      "model": "o3-deep-research",
+      "reasoning_effort": "high"
+    }
+  }
+}
+```
+
+#### Efficient Deep Research
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "grounded_search",
+    "arguments": {
+      "query": "latest developments in machine learning optimization techniques",
+      "model": "o4-mini-deep-research",
+      "reasoning_effort": "medium"
     }
   }
 }
@@ -296,7 +327,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Current Version**: 1.2.0  
+**Current Version**: 1.3.0  
 **Node.js**: 18+  
 **MCP Protocol**: 1.0.1  
-**Supported Models**: O3-2025-04-16, GPT-5, GPT-5-mini, GPT-5-nano
+**Supported Models**: O3-2025-04-16, GPT-5, GPT-5-mini, GPT-5-nano, O3-Deep-Research, O4-Mini-Deep-Research

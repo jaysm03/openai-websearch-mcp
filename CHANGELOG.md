@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-08-23
+
+### Added
+- Deep Research API support with advanced research capabilities
+- New model support: `o3-deep-research` for advanced research queries
+- New model support: `o4-mini-deep-research` for efficient deep research
+- Enhanced documentation with Deep Research usage examples
+- Updated package description to reflect Deep Research capabilities
+
+### Changed
+- Updated model selection parameter to include Deep Research models
+- Enhanced README with comprehensive Deep Research examples
+- Updated supported models list in documentation
+
+### Technical Details
+- Maintains full backward compatibility with existing implementations
+- No breaking changes to existing API or configuration
+- Deep Research models integrate seamlessly with existing reasoning effort levels
+- All existing features and models remain fully functional
+
 ## [1.2.0] - 2025-08-13
 
 ### Added
