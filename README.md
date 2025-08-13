@@ -28,7 +28,7 @@ A production-ready MCP (Model Context Protocol) server that integrates OpenAI's 
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/[username]/openai-with-search-grounding
    cd openai_with_search_grounding
    ```
 
